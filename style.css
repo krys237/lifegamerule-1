@@ -1,0 +1,372 @@
+:root {
+    --text-light: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.8);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-light);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('Light soft/bg.png') no-repeat center center;
+    background-size: cover;
+    z-index: -1;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-light);
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+}
+
+.glass-nav {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 6px 6px;
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-nav ul {
+    display: flex;
+    list-style: none;
+    align-items: center;
+}
+
+.glass-nav a {
+    text-decoration: none;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 30px;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.glass-nav li.active a {
+    background: #ffffff;
+    color: #000000;
+}
+
+.glass-nav li:not(.active) a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-text {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.btn-text:hover {
+    color: var(--text-light);
+}
+
+.btn-primary {
+    background: #ffffff;
+    color: #000000;
+    padding: 10px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+/* Hero Section */
+.hero {
+    padding: 80px 20px 60px;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--text-light);
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.5;
+}
+
+.hero-ctas {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.btn-cta {
+    padding: 14px 28px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-cta.secondary {
+    background: #000000;
+    color: #ffffff;
+}
+
+.btn-cta.tertiary {
+    background: #3b82f6; /* Blue button */
+    color: #ffffff;
+}
+
+.btn-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Cards Section - Exactly 6 cards on one line */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    padding: 0 40px 100px;
+    width: 100%;
+}
+
+.card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card:hover img {
+    transform: scale(1.05);
+}
+
+.card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 15px 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+    text-align: left;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.card p {
+    display: none; /* Hidden to match the screenshot */
+}
+
+.card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* Quiz UI Components (Keep your new designs here) */
+.quiz-container {
+    max-width: 700px;
+    margin: 60px auto;
+    background: #fff;
+    border-radius: 32px;
+    padding: 50px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+    animation: fadeInUp 0.5s ease;
+}
+
+.quiz-header { margin-bottom: 32px; }
+.q-count { font-weight: 800; font-size: 1.1rem; color: #64748b; }
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 20px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #2563eb;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.question-text {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.2;
+    margin-bottom: 12px;
+}
+
+.question-hint { color: var(--text-muted); margin-bottom: 40px; }
+
+.option-card {
+    padding: 22px;
+    border: 2px solid #f1f5f9;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.2s;
+}
+
+.option-card:hover { border-color: #cbd5e1; background: #f8fafc; }
+.option-card.selected { border-color: #2563eb; background: #eff6ff; }
+
+.option-letter {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.option-card.selected .option-letter { background: #2563eb; color: #fff; }
+
+.btn-next {
+    width: 100%;
+    padding: 20px;
+    background: var(--text-dark);
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Redesigned Capture & Result Styles (KEEP THESE AS THEY MATCH MODELS) */
+.capture-container {
+    max-width: 1100px;
+    margin: 60px auto;
+    background: #fff;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+}
+
+.capture-layout { display: grid; grid-template-columns: 1.2fr 1fr; min-height: 650px; }
+.capture-info { padding: 80px; background: #f8fafc; display: flex; flex-direction: column; justify-content: center; }
+.capture-title { font-size: 3.5rem; font-weight: 900; line-height: 1; margin-bottom: 24px; letter-spacing: -0.04em; }
+.capture-form-card { padding: 80px; display: flex; flex-direction: column; justify-content: center; }
+.btn-get-result { width: 100%; padding: 20px; background: #2563eb; color: #fff; border: none; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; }
+
+.result-container-final { max-width: 450px; margin: 60px auto; }
+.result-card { background: #fff; border-radius: 45px; overflow: hidden; box-shadow: 0 50px 120px rgba(0,0,0,0.25); }
+.result-badge-area { padding: 80px 40px 40px; text-align: center; color: #fff; background: linear-gradient(135deg, #6366f1, #a855f7); }
+.avatar-wrapper { width: 160px; height: 160px; background: #fff; border-radius: 40px; margin: 0 auto 30px; padding: 12px; }
+.avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 30px; }
+.rank-value { font-size: 4.5rem; font-weight: 900; }
+.btn-explore { width: 100%; padding: 20px; background: #f97316; color: #fff; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1000px) {
+    .hero h1 { font-size: 2.8rem; }
+    .capture-layout { grid-template-columns: 1fr; }
+    .capture-info, .capture-form-card { padding: 40px; }
+    .cards-container { grid-template-columns: 1fr; }
+}
