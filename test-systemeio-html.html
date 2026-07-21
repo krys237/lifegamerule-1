@@ -1,0 +1,203 @@
+<!--
+  TEST D'INTÉGRATION — Bloc "Code HTML" de Systeme.io
+  =====================================================
+  But : vérifier, sur une vraie page publiée Systeme.io, si :
+    1) le <style> inline est conservé et appliqué
+    2) le <script> inline s'exécute
+    3) les attributs onclick="..." écrits en dur survivent à l'enregistrement
+    4) un <script src="..."> externe (CDN) est autorisé à s'exécuter
+    5) une image externe (URL absolue) se charge
+    6) le bloc est wrappé dans un iframe / a du chrome autour (impacte le layout plein écran)
+
+  MODE D'EMPLOI :
+  1. Dans Systeme.io, crée une page de test (funnel de test, pas la prod).
+  2. Ajoute un élément "Code HTML" / "Custom HTML" sur la page.
+  3. Colle TOUT ce fichier tel quel dans ce bloc.
+  4. Enregistre puis PUBLIE la page (pas juste l'aperçu interne — un vrai aperçu public,
+     car certains builders appliquent leur nettoyage HTML seulement à la sauvegarde/publication).
+  5. Ouvre l'URL publique de la page et regarde le résultat directement à l'écran :
+     un bandeau vert/rouge donne le verdict global, et chaque ligne le détail.
+  6. Reviens me dire ce que tu vois (ou copie-colle le texte affiché / une capture).
+-->
+
+<div id="stio-test" style="
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 640px;
+    margin: 24px auto;
+    padding: 0 16px;
+    color: #0f1419;
+    box-sizing: border-box;
+">
+    <h2 style="font-size: 1.3rem; font-weight: 800; margin: 0 0 4px;">
+        Test d'intégration HTML — Systeme.io
+    </h2>
+    <p style="font-size: 0.85rem; color: #5b6470; margin: 0 0 18px;">
+        Cette page vérifie automatiquement ce que Systeme.io autorise. Lis le bandeau de verdict tout en bas.
+    </p>
+
+    <div id="stio-rows" style="border: 1px solid #e8e5dd; border-radius: 12px; overflow: hidden;">
+
+        <div class="stio-row" data-test="css" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #e8e5dd;">
+            <span>1. Bloc &lt;style&gt; appliqué</span>
+            <span class="stio-status" id="status-css">⏳ vérification…</span>
+        </div>
+
+        <div class="stio-row" data-test="script" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #e8e5dd;">
+            <span>2. &lt;script&gt; inline exécuté</span>
+            <span class="stio-status" id="status-script">❌ script non exécuté</span>
+        </div>
+
+        <div class="stio-row" data-test="onclick" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #e8e5dd;">
+            <span>3. Attribut onclick="…" conservé</span>
+            <span class="stio-status" id="status-onclick">❌ non déclenché</span>
+        </div>
+
+        <div class="stio-row" data-test="extscript" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #e8e5dd;">
+            <span>4. &lt;script src="…"&gt; externe (CDN)</span>
+            <span class="stio-status" id="status-extscript">⏳ chargement…</span>
+        </div>
+
+        <div class="stio-row" data-test="img" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #e8e5dd;">
+            <span>5. Image externe (URL absolue)</span>
+            <span class="stio-status" id="status-img">⏳ chargement…</span>
+        </div>
+
+        <div class="stio-row" data-test="frame" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px;">
+            <span>6. Contexte de la page (iframe ?)</span>
+            <span class="stio-status" id="status-frame">⏳ vérification…</span>
+        </div>
+
+    </div>
+
+    <!-- Bouton avec onclick statique en dur : teste si le builder le laisse passer à la sauvegarde -->
+    <button
+        id="onclick-btn"
+        onclick="document.getElementById('status-onclick').textContent = '✅ onclick fonctionne'; document.getElementById('status-onclick').style.color = '#16a34a';"
+        style="display:none;"
+    >test onclick</button>
+
+    <img
+        id="ext-img"
+        src="https://www.google.com/favicon.ico"
+        alt="test"
+        style="display:none;"
+        onload="document.getElementById('status-img').textContent = '✅ image chargée'; document.getElementById('status-img').style.color = '#16a34a';"
+        onerror="document.getElementById('status-img').textContent = '❌ image bloquée'; document.getElementById('status-img').style.color = '#dc2626';"
+    >
+
+    <div id="stio-verdict" style="
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.92rem;
+        background: #f1f5f9;
+        color: #475569;
+    ">
+        ⏳ Calcul du verdict en cours (laisse 1-2 secondes, le script externe doit avoir le temps de répondre)…
+    </div>
+
+    <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 14px; line-height: 1.5;">
+        Détail technique : innerHeight = <span id="dbg-vh"></span>px ·
+        clientHeight = <span id="dbg-ch"></span>px ·
+        top window = <span id="dbg-top"></span>
+    </div>
+</div>
+
+<style>
+    /* Test 1 : si cette règle est appliquée, le badge CSS devient vert avec un fond marqué */
+    #stio-test .stio-css-marker {
+        background: #16a34a !important;
+        color: #ffffff !important;
+        padding: 2px 8px !important;
+        border-radius: 6px !important;
+    }
+</style>
+
+<script>
+(function () {
+    // ---- Test 1 : CSS ----
+    // On crée un span, on lui donne la classe ciblée par la règle <style> ci-dessus,
+    // on lit le style calculé : si le fond est bien vert, la feuille de style a été appliquée.
+    var probe = document.createElement('span');
+    probe.className = 'stio-css-marker';
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    var stioRoot = document.getElementById('stio-test');
+    stioRoot.appendChild(probe); // doit être un descendant de #stio-test pour matcher le sélecteur scopé
+    var bg = window.getComputedStyle(probe).backgroundColor;
+    stioRoot.removeChild(probe);
+    var cssOk = bg === 'rgb(22, 163, 74)';
+    var cssStatus = document.getElementById('status-css');
+    if (cssOk) {
+        cssStatus.textContent = '✅ CSS appliqué';
+        cssStatus.style.color = '#16a34a';
+    } else {
+        cssStatus.textContent = '❌ CSS non appliqué (fond lu: ' + bg + ')';
+        cssStatus.style.color = '#dc2626';
+    }
+
+    // ---- Test 2 : script inline ----
+    // Le simple fait que ce bloc <script> s'exécute prouve le test. On l'affiche direct.
+    var scriptStatus = document.getElementById('status-script');
+    scriptStatus.textContent = '✅ script inline exécuté';
+    scriptStatus.style.color = '#16a34a';
+
+    // ---- Test 3 : onclick statique ----
+    // On déclenche un clic synthétique sur le bouton caché qui porte un onclick="" écrit en dur.
+    var btn = document.getElementById('onclick-btn');
+    if (btn) { btn.click(); }
+    // Si le statut n'a pas changé après 500ms, l'attribut a probablement été supprimé au save.
+    setTimeout(function () {
+        var s = document.getElementById('status-onclick');
+        if (s.textContent.indexOf('✅') === -1) {
+            s.textContent = '❌ onclick supprimé par le builder';
+            s.style.color = '#dc2626';
+        }
+    }, 500);
+
+    // ---- Test 6 : contexte iframe / dimensions ----
+    document.getElementById('dbg-vh').textContent = window.innerHeight;
+    document.getElementById('dbg-ch').textContent = document.documentElement.clientHeight;
+    var inIframe = window.self !== window.top;
+    document.getElementById('dbg-top').textContent = inIframe ? 'DANS UN IFRAME' : 'fenêtre principale';
+    var frameStatus = document.getElementById('status-frame');
+    if (inIframe) {
+        frameStatus.textContent = '⚠️ contenu dans un iframe';
+        frameStatus.style.color = '#d97706';
+    } else {
+        frameStatus.textContent = '✅ pas d\'iframe';
+        frameStatus.style.color = '#16a34a';
+    }
+
+    // ---- Verdict final (laisse du temps au script externe pour répondre) ----
+    setTimeout(function () {
+        var results = {
+            css: cssOk,
+            script: true, // si on arrive ici, le script inline tourne
+            onclick: document.getElementById('status-onclick').textContent.indexOf('✅') !== -1,
+            extscript: typeof window.__stioExtScriptLoaded !== 'undefined',
+            img: document.getElementById('status-img').textContent.indexOf('✅') !== -1
+        };
+        var failed = Object.keys(results).filter(function (k) { return !results[k]; });
+        var verdict = document.getElementById('stio-verdict');
+        if (failed.length === 0) {
+            verdict.style.background = '#dcfce7';
+            verdict.style.color = '#166534';
+            verdict.textContent = '✅ TOUT FONCTIONNE — le bloc HTML custom de Systeme.io supporte CSS + JS + onclick + script externe + images. Le site peut être porté directement.';
+        } else {
+            verdict.style.background = '#fee2e2';
+            verdict.style.color = '#991b1b';
+            verdict.textContent = '⚠️ Limitation détectée sur : ' + failed.join(', ') + '. Regarde le détail ligne par ligne ci-dessus — ça orientera la stratégie (hébergement externe du CSS/JS ou pas).';
+        }
+    }, 1500);
+})();
+</script>
+
+<!-- Test 4 : script externe via CDN public — définit une variable globale si le fichier a pu s'exécuter -->
+<script>window.__stioExtScriptLoaded = undefined;</script>
+<script
+    src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"
+    onload="window.__stioExtScriptLoaded = (typeof dayjs === 'function'); document.getElementById('status-extscript').textContent = window.__stioExtScriptLoaded ? '✅ script externe exécuté' : '❌ chargé mais non fonctionnel'; document.getElementById('status-extscript').style.color = window.__stioExtScriptLoaded ? '#16a34a' : '#dc2626';"
+    onerror="document.getElementById('status-extscript').textContent = '❌ script externe bloqué'; document.getElementById('status-extscript').style.color = '#dc2626';"
+></script>

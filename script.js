@@ -101,24 +101,78 @@ const QUESTIONS = [
     }
 ];
 
-const RANKS = [
-    { max: 16, nom: "Bronze", image: "Light soft/carte6/bronze.png", couleur: "#8B5E3C" },
-    { max: 24, nom: "Argent", image: "Light soft/carte6/argent.png", couleur: "#7A8590" },
-    { max: 28, nom: "Or", image: "Light soft/carte6/or.png", couleur: "#C99417" },
-    { max: 34, nom: "Platine", image: "Light soft/carte6/platine.png", couleur: "#5B98B5" },
-    { max: 38, nom: "Diamant", image: "Light soft/carte6/diamant.png", couleur: "#7B6BC4" },
-    { max: 50, nom: "Maître", image: "Light soft/carte6/maitre.png", couleur: "#C39A2E" }
-];
+// ============================================================================
+// ⚠️ À CONFIGURER : URL du tunnel de vente Systeme.io.
+// Remplace cette valeur par l'URL réelle de ton tunnel (c'est là que se fait
+// la capture email, la livraison du cadeau vidéo et la vente de l'ebook —
+// avec les boutons de paiement Chariow connectés depuis Systeme.io).
+// ============================================================================
+const SYSTEMEIO_FUNNEL_URL = "https://toncompte.systeme.io/ton-tunnel";
+
+const RANK_IMAGES = {
+    "Bronze": "Light soft/carte6/bronze.png",
+    "Argent": "Light soft/carte6/argent.png",
+    "Or": "Light soft/carte6/or.png",
+    "Platine": "Light soft/carte6/platine.png",
+    "Diamant": "Light soft/carte6/diamant.png",
+    "Maître": "Light soft/carte6/maitre.png"
+};
+
+// Contenu "avant-goût" des 18 niveaux (source : CDC section 8).
+// On n'affiche qu'un extrait (émotion / perception / concrètement + chemin) —
+// l'analyse complète est le produit vendu dans le tunnel.
+const LEVELS = {
+    10: { nom: "Honte", emotion: "Humiliation et rejet de soi.", perception: "Tu te vois comme mauvais ou indigne.", concretement: "Tu ressens que le problème, c'est toi.", evolution_vers: "Culpabilité (14)", chemin_evolution: ["Comprendre que tu n'attaches pas ta valeur à tes erreurs.", "Passer de 'je suis mauvais' à 'j'ai fait une erreur'."] },
+    14: { nom: "Culpabilité", emotion: "Remords et auto-reproche.", perception: "Tu as l'impression d'avoir mal agi.", concretement: "Tu te reproches souvent tes erreurs.", evolution_vers: "Apathie (18)", chemin_evolution: ["Arrêter l'auto-punition et accepter le passé.", "Passer de 'je mérite de souffrir' à 'je peux lâcher'."] },
+    16: { nom: "Apathie", emotion: "Vide et résignation.", perception: "La vie paraît sans espoir.", concretement: "Tu as l'impression que rien ne changera vraiment.", evolution_vers: "Tristesse (20)", chemin_evolution: ["Reconnecter à tes émotions au lieu de rester vide.", "Passer de la résignation au ressenti."] },
+    18: { nom: "Apathie", emotion: "Vide et résignation.", perception: "La vie paraît sans espoir.", concretement: "Tu as l'impression que rien ne changera vraiment.", evolution_vers: "Tristesse (20)", chemin_evolution: ["Reconnecter à tes émotions au lieu de rester vide.", "Passer de la résignation au ressenti."] },
+    20: { nom: "Tristesse", emotion: "Chagrin et nostalgie.", perception: "La vie semble marquée par la perte.", concretement: "Tu ressens souvent que quelque chose te manque.", evolution_vers: "Peur (22)", chemin_evolution: ["Retrouver un minimum d'espoir et d'énergie.", "Passer du retrait à l'anticipation."] },
+    22: { nom: "Peur", emotion: "Anxiété et inquiétude.", perception: "La vie paraît incertaine ou risquée.", concretement: "Tu anticipes ce qui pourrait mal se passer.", evolution_vers: "Désir (24)", chemin_evolution: ["Faire une petite action malgré la peur.", "Passer de l'évitement au mouvement."] },
+    24: { nom: "Désir", emotion: "Manque et insatisfaction.", perception: "Il manque quelque chose pour être heureux.", concretement: "Tu penses que le bonheur arrive quand tu auras quelque chose.", evolution_vers: "Colère (26)", chemin_evolution: ["Comprendre que le manque peut devenir une énergie d'action.", "Passer de vouloir à agir contre ce qui bloque."] },
+    26: { nom: "Colère", emotion: "Frustration et irritation fréquentes.", perception: "La vie semble injuste ou frustrante.", concretement: "Tu ressens facilement que ce n'est pas normal.", evolution_vers: "Orgueil (28)", chemin_evolution: ["Canaliser la colère vers la construction personnelle.", "Passer de la lutte au besoin de te valoriser."] },
+    28: { nom: "Orgueil", emotion: "Supériorité ou besoin de prouver ta valeur.", perception: "La vie est perçue comme une compétition d'image et de statut.", concretement: "Tu veux montrer que tu vaux quelque chose.", evolution_vers: "Courage (30)", chemin_evolution: ["Accepter ta vulnérabilité et arrêter de vouloir prouver ta valeur.", "Passer de l'image à l'action authentique."] },
+    30: { nom: "Courage", emotion: "Détermination malgré la peur.", perception: "La vie est un défi à relever.", concretement: "Tu passes à l'action même sans confiance totale.", evolution_vers: "Neutralité (32)", chemin_evolution: ["Comprendre que tout n'est pas un combat.", "Passer de la lutte à la flexibilité."] },
+    32: { nom: "Neutralité", emotion: "Détente et moins de drame intérieur.", perception: "La vie ne te paraît ni dramatique ni exceptionnelle.", concretement: "Tu prends les choses comme elles viennent sans trop dramatiser.", evolution_vers: "Volonté (34)", chemin_evolution: ["Sortir du confort et choisir une direction.", "Passer de 'je subis' à 'je m'engage'."] },
+    34: { nom: "Volonté", emotion: "Motivation et engagement.", perception: "La vie est vue comme pleine d'opportunités possibles.", concretement: "Tu veux évoluer et tu fais des efforts pour y arriver.", evolution_vers: "Acceptation (36)", chemin_evolution: ["Accepter que tout ne dépend pas de l'effort.", "Passer de la force d'action à la confiance dans la réalité."] },
+    36: { nom: "Acceptation", emotion: "Stabilité intérieure même face aux difficultés.", perception: "Tu vois que la vie a du sens même quand elle est imparfaite.", concretement: "Tu acceptes ce qui est sans abandonner l'envie d'avancer.", evolution_vers: "Raison (38)", chemin_evolution: ["Chercher à comprendre la vie et toi-même plus en profondeur.", "Passer de 'j'accepte' à 'je comprends'."] },
+    38: { nom: "Raison", emotion: "Stabilité et clarté mentale.", perception: "Tu vois la vie comme compréhensible et logique.", concretement: "Tu cherches à comprendre avant de réagir émotionnellement.", evolution_vers: "Amour (40)", chemin_evolution: ["Passer de comprendre les autres à les ressentir.", "Ajouter empathie et bienveillance à la logique."] },
+    40: { nom: "Amour", emotion: "Bienveillance et compassion envers les autres.", perception: "Tu vois les autres comme profondément humains et connectés à toi.", concretement: "Même quand quelqu'un agit mal, tu peux voir sa souffrance derrière.", evolution_vers: "Joie (42)", chemin_evolution: ["Laisser l'amour s'exprimer sans attente ni besoin de retour.", "Passer de la compassion à une gratitude naturelle pour la vie."] },
+    42: { nom: "Joie", emotion: "Gratitude, enthousiasme et plaisir d'exister.", perception: "La vie te paraît belle et digne d'être appréciée.", concretement: "Tu ressens de la joie sans effort même quand les circonstances ne sont pas idéales.", evolution_vers: "Paix (46)", chemin_evolution: ["Apprendre à rester stable même quand la joie diminue.", "Passer du plaisir d'exister à une sérénité constante."] },
+    46: { nom: "Paix", emotion: "Sérénité stable même quand la vie est imparfaite.", perception: "Tu vois la vie comme globalement sûre et harmonieuse.", concretement: "Tu ne fuis pas la vie. Tu es simplement moins réactif et plus stable.", evolution_vers: "Illumination (50)", chemin_evolution: ["Lâcher le besoin de comprendre ou de contrôler la vie.", "Passer de la sérénité à la confiance totale dans ce qui est."] },
+    50: { nom: "Illumination", emotion: "Paix et plénitude qui ne dépendent plus de ce qui arrive autour de toi.", perception: "Tu vois la vie comme parfaite telle qu'elle est, sans manque ni conflit intérieur.", concretement: "Tu ressens toujours les émotions, mais elles ne te contrôlent plus. C'est la maîtrise absolue.", evolution_vers: null, chemin_evolution: ["Tu es déjà au niveau le plus haut.", "L'évolution consiste à rester présent sans chercher à contrôler la vie."] }
+};
 
 let currentQuestionIndex = 0;
 let totalScore = 0;
 let selectedOption = null;
 
-function getRank(score) {
-    for (let r of RANKS) {
-        if (score <= r.max) return r;
-    }
-    return RANKS[RANKS.length - 1];
+window.setActiveNav = function(step) {
+    document.querySelectorAll('.glass-nav li[data-nav]').forEach(li => {
+        li.classList.toggle('active', li.dataset.nav === step);
+    });
+};
+
+function getRankFromScore(score) {
+    if (score <= 16) return { nom: "Bronze", couleur: "#8B5E3C" };
+    if (score <= 24) return { nom: "Argent", couleur: "#7A8590" };
+    if (score <= 28) return { nom: "Or", couleur: "#C99417" };
+    if (score <= 34) return { nom: "Platine", couleur: "#5B98B5" };
+    if (score <= 38) return { nom: "Diamant", couleur: "#7B6BC4" };
+    return { nom: "Maître", couleur: "#C39A2E" };
+}
+
+function getLevelData(score) {
+    // Règle Bigslaay : si le score est impair, on arrondit au pair supérieur.
+    const adjusted = score % 2 === 0 ? score : score + 1;
+    const validScores = [10, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 46, 50];
+    const closest = validScores.find(v => v >= adjusted) || 50;
+    return {
+        score: adjusted,
+        plafond: closest,
+        plancher: Math.max(10, closest - 10),
+        level: LEVELS[closest],
+        rank: getRankFromScore(closest)
+    };
 }
 
 window.startQuiz = function() {
@@ -133,8 +187,26 @@ window.startQuiz = function() {
     quizView = document.createElement('div');
     quizView.id = 'quiz-view';
     document.querySelector('main').appendChild(quizView);
-    
+
+    window.setActiveNav('quiz');
     window.renderQuestion();
+};
+
+window.exitQuiz = function() {
+    currentQuestionIndex = 0;
+    totalScore = 0;
+    selectedOption = null;
+
+    const quizView = document.getElementById('quiz-view');
+    if (quizView) quizView.remove();
+
+    const hero = document.querySelector('.hero');
+    const cards = document.querySelector('.cards-container');
+    if (hero) hero.style.display = '';
+    if (cards) cards.style.display = '';
+
+    window.setActiveNav('regles');
+    window.scrollTo(0, 0);
 };
 
 window.renderQuestion = function() {
@@ -147,6 +219,7 @@ window.renderQuestion = function() {
     
     quizContainer.className = 'quiz-container';
     quizContainer.innerHTML = `
+        <button type="button" class="quiz-exit" onclick="exitQuiz()" aria-label="Quitter le quiz">&times;</button>
         <div class="quiz-header">
             <div class="quiz-nav">
                 <span class="q-count">${(currentQuestionIndex + 1).toString().padStart(2, '0')} / ${QUESTIONS.length.toString().padStart(2, '0')}</span>
@@ -198,94 +271,71 @@ window.nextQuestion = function() {
         currentQuestionIndex++;
         window.renderQuestion();
     } else {
-        window.showCaptureForm();
+        window.showResult();
     }
 };
 
-window.showCaptureForm = function() {
+window.showResult = function() {
     const quizContainer = document.getElementById('quiz-view');
     if (!quizContainer) return;
 
-    quizContainer.className = 'capture-container';
+    const { level, rank, plafond, plancher } = getLevelData(totalScore);
+    const image = RANK_IMAGES[rank.nom];
+
+    // Position de la "zone" (plancher → plafond) sur l'échelle 10–50.
+    const zoneLeft = ((plancher - 10) / 40) * 100;
+    const zoneWidth = ((plafond - plancher) / 40) * 100;
+
+    const nextLevelBlock = level.evolution_vers
+        ? `
+                    <div class="next-level">
+                        <h5>Pour atteindre ${level.evolution_vers}</h5>
+                        <ul>${level.chemin_evolution.map(step => `<li>${step}</li>`).join('')}</ul>
+                    </div>`
+        : `
+                    <div class="next-level">
+                        <h5>Tu es au sommet de l'échelle</h5>
+                        <p class="next-level-hook">${level.chemin_evolution[1] || level.chemin_evolution[0]}</p>
+                    </div>`;
+
+    window.setActiveNav('resultat');
+    quizContainer.className = 'result-view';
     quizContainer.innerHTML = `
-        <div class="capture-layout">
-            <div class="capture-info">
-                <span class="tagline">WE'RE HERE TO HELP YOU</span>
-                <h2 class="capture-title">Découvre Ton Niveau de Conscience</h2>
-                <p class="capture-text">Bravo d'être allé jusqu'au bout. Ton analyse est prête. Laisse-nous ton nom et ton email pour y accéder instantanément.</p>
-                
-                <div class="contact-mini">
-                    <div class="contact-item">
-                        <div class="icon-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
-                        <div class="contact-detail">
-                            <span>E-mail</span>
-                            <strong>contact@onepourcent.com</strong>
-                        </div>
+        <div class="result-split">
+            <button type="button" class="quiz-exit" onclick="exitQuiz()" aria-label="Recommencer le test">&times;</button>
+
+            <aside class="rank-panel">
+                <span class="rank-eyebrow">Ton rang</span>
+                <div class="rank-avatar"><img src="${image}" alt="${rank.nom}"></div>
+                <h2 class="rank-name" style="color:${rank.couleur}">${rank.nom}</h2>
+                <div class="rank-hawkins">${level.nom} · ${plafond} pts</div>
+                <div class="zone-meter">
+                    <div class="zone-track">
+                        <div class="zone-fill" style="left:${zoneLeft}%; width:${zoneWidth}%; background:${rank.couleur}"></div>
                     </div>
-                    <div class="contact-item">
-                        <div class="icon-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.81 12.81 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
-                        <div class="contact-detail">
-                            <span>Phone number</span>
-                            <strong>+33 1 23 45 67 89</strong>
-                        </div>
-                    </div>
+                    <div class="zone-legend"><span>Plancher ${plancher}</span><span>Plafond ${plafond}</span></div>
                 </div>
-            </div>
-            
-            <div class="capture-form-card">
-                <form id="lead-form" onsubmit="handleCaptureSubmit(event)">
-                    <div class="input-field">
-                        <label>Nom</label>
-                        <input type="text" id="prenom" placeholder="Ton nom" required>
-                    </div>
-                    <div class="input-field">
-                        <label>Email</label>
-                        <input type="email" id="email" placeholder="ton@email.com" required>
-                    </div>
-                    <button type="submit" class="btn-get-result">
-                        <div class="btn-circle">→</div>
-                        Obtenir mon résultat
-                    </button>
-                </form>
-            </div>
-        </div>
-    `;
-    window.scrollTo(0, 0);
-};
+            </aside>
 
-window.handleCaptureSubmit = function(event) {
-    event.preventDefault();
-    const prenom = document.getElementById('prenom').value;
-    window.showResult(prenom);
-};
-
-window.showResult = function(prenom) {
-    const adjustedScore = totalScore % 2 === 0 ? totalScore : totalScore + 1;
-    const rank = getRank(adjustedScore);
-    
-    const quizContainer = document.getElementById('quiz-view');
-    if (!quizContainer) return;
-
-    quizContainer.className = 'result-container-final';
-    quizContainer.innerHTML = `
-        <div class="result-card">
-            <div class="result-badge-area">
-                <div class="avatar-wrapper">
-                    <img src="${rank.image}" alt="${rank.nom}">
+            <div class="content-panel">
+                <h3 class="content-title">Ce que ton niveau révèle</h3>
+                <div class="traits-grid">
+                    <div class="trait"><span class="trait-label">Émotion</span><p>${level.emotion}</p></div>
+                    <div class="trait"><span class="trait-label">Perception</span><p>${level.perception}</p></div>
+                    <div class="trait"><span class="trait-label">Concrètement</span><p>${level.concretement}</p></div>
                 </div>
-                <h2 class="user-name">${prenom}</h2>
-                <span class="rank-title">Rank</span>
-                <h3 class="rank-value">${rank.nom}</h3>
-                <div class="score-badge">Score: ${adjustedScore}/50</div>
-            </div>
-            
-            <div class="result-body">
-                <h4 class="congrats-text">Congratulations, you've completed this quiz!</h4>
-                <p class="result-desc">Let's keep testing your knowledge by playing more quizzes!</p>
-                
-                <button class="btn-explore" onclick="location.reload()">
-                    Explore More
-                </button>
+
+                ${nextLevelBlock}
+
+                <div class="offer-bar">
+                    <div class="offer-copy">
+                        <strong>Amorce ton passage au niveau supérieur</strong>
+                        <span>Vidéo de 2 min offerte, puis le manuel complet des 18 niveaux.</span>
+                    </div>
+                    <a href="${SYSTEMEIO_FUNNEL_URL}" class="btn-cadeau">Recevoir mon cadeau →</a>
+                </div>
+
+                <button type="button" class="btn-restart" onclick="exitQuiz()">Recommencer le test</button>
             </div>
         </div>
     `;
